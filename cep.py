@@ -1,13 +1,23 @@
 import requests
+import json
 
-cep = input("Digite o CEP desejado: ")
+def consulta_cep(cep):
+    url = f"https://viacep.com.br/ws/{cep}/json/"
+    resposta = requests.get(url)
+    if resposta.status_code == 200:
+        dados = json.loads(resposta.content)
+        return dados
+    else:
+        return None
 
-url = f"https://viacep.com.br/ws/{cep}/json/"
+cep = input("Digite o CEP que deseja consultar: ")
+endereco = consulta_cep(cep)
 
-response = requests.get(url)
-
-if response.status_code == 200:
-    data = response.json()
-    print(f"Endereço: {data['logradouro']}, {data['bairro']}, {data['localidade']} - {data['uf']}")
+if endereco is not None:
+    print("Endereço encontrado:")
+    print(f"Logradouro: {endereco['logradouro']}")
+    print(f"Bairro: {endereco['bairro']}")
+    print(f"Cidade: {endereco['localidade']}")
+    print(f"Estado: {endereco['uf']}")
 else:
-    print("Não foi possível encontrar informações para este CEP.")
+    print("CEP não encontrado.")
